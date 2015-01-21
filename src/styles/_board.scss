@@ -1,0 +1,203 @@
+
+/* IMPORTS */
+
+@import 'variables';
+
+/* BOARD */
+
+#board {
+
+    background-color: $color-board;
+    border-radius: $border-radius-large;
+    font-size: 0px;
+    color: white;
+    width: 80%;
+    position: relative;
+
+    .content {
+        position: relative;
+        margin: $layout-spacing 0 0 $layout-spacing;
+    }
+
+    .placeholder, .block {
+
+        border-radius: $border-radius-normal;
+        margin: 0 $layout-spacing $layout-spacing 0;
+
+        &:before {
+            content: '';
+            display: block;
+            padding-top: 100%;
+        }
+
+    }
+
+    .placeholder {
+        display: inline-block;
+        background-color: $color-placeholder;
+        position: relative;
+    }
+
+    .block {
+
+        font-size: 45px;
+        font-weight: bold;
+        position: absolute;
+        transition: top 1s ease 0s, left 1s ease 0s;
+
+        &:after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            content: attr(data-value);
+        }
+
+        &.value-2 {
+            background-color: #EBE3D9;
+            color: #746E65;
+        }
+
+        &.value-4 {
+            background-color: #E9DFC7;
+            color: #746E65;
+        }
+
+        &.value-8 {
+            background-color: #E2B077;
+            color: #F8F6F2;
+        }
+
+        &.value-16 {
+            background-color: #E09461;
+            color: #F8F6F2;
+        }
+
+        &.value-32 {
+            background-color: #DD7B5C;
+            color: #F8F6F2;
+        }
+
+        &.value-64 {
+            background-color: #DA5D37;
+            color: #F8F6F2;
+        }
+
+        &.value-128 {
+            background-color: #E5CF71;
+            color: #F8F6F2;
+        }
+
+        &.value-256 {
+            background-color: #E5CC61;
+            color: #F8F6F2;
+            box-shadow: 0px 0px 30px 10px rgba(243, 215, 116, 0.318), 0px 0px 0px 1px rgba(255, 255, 255, 0.192) inset;
+            z-index: 1;
+        }
+
+        &.value-512 {
+            background-color: #E4C850;
+            color: #F8F6F2;
+            box-shadow: 0px 0px 30px 10px rgba(243, 215, 116, 0.396), 0px 0px 0px 1px rgba(255, 255, 255, 0.24) inset;
+            z-index: 2;
+        }
+
+        &.value-1024 {
+            background-color: #E3C540;
+            color: #F8F6F2;
+            box-shadow: 0px 0px 30px 10px rgba(243, 215, 116, 0.475), 0px 0px 0px 1px rgba(255, 255, 255, 0.286) inset;
+            z-index: 3;
+        }
+
+        &.value-2048 {
+            background-color: #E2C230;
+            color: #F8F6F2;
+            box-shadow: 0px 0px 30px 10px rgba(243, 215, 116, 0.557), 0px 0px 0px 1px rgba(255, 255, 255, 0.333) inset;
+            z-index: 4;
+        }
+
+        &.value-4096 {
+            background-color: red;
+            color: blue;
+            z-index: 5;
+        }
+
+        &.value-8192 {
+            background-color: blue;
+            color: green;
+            z-index: 6;
+        }
+
+        &.value-16384 {
+            background-color: green;
+            color: gold;
+            z-index: 7;
+        }
+
+    }
+
+    &.sizex-1 {
+        .placeholder, .block {
+            width: calc(100% - #{$layout-spacing});
+        }
+    }
+
+    &.sizex-2 {
+        .placeholder, .block {
+            width: calc(50% - #{$layout-spacing});
+        }
+    }
+
+    &.sizex-3 {
+        .placeholder, .block {
+            width: calc(33.333333% - #{$layout-spacing});
+        }
+    }
+
+    &.sizex-4 {
+        .placeholder, .block {
+            width: calc(25% - #{$layout-spacing});
+        }
+    }
+
+    &.sizex-5 {
+        .placeholder, .block {
+            width: calc(20% - #{$layout-spacing});
+        }
+    }
+
+    &.sizex-6 {
+        .placeholder, .block {
+            width: calc(16.66667% - #{$layout-spacing});
+        }
+    }
+
+    &.sizex-7 {
+        .placeholder, .block {
+            width: calc(14.28571% - #{$layout-spacing});
+        }
+    }
+
+    &.sizex-8 {
+        .placeholder, .block {
+            width: calc(12.5% - #{$layout-spacing});
+        }
+    }
+
+    &.sizex-9 {
+        .placeholder, .block {
+            width: calc(11.11111% - #{$layout-spacing});
+        }
+    }
+
+    &.sizex-10 {
+        .placeholder, .block {
+            width: calc(10% - #{$layout-spacing});
+        }
+    }
+
+}

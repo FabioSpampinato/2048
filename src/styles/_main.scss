@@ -1,0 +1,82 @@
+
+/* IMPORTS */
+
+@import 'variables';
+
+/* GENERAL */
+
+html {
+    height: 100%;
+    font-family: $font-family;
+    font-size: $font-size-normal;
+    color: $color-txt;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+body {
+    background-color: $color-bg;
+    position: relative;
+    height: 100%;
+    text-align: center;
+}
+
+/* OTHER */
+
+#wrapper {
+    max-width: 635px;
+    margin: 0 auto;
+}
+
+#header {
+    height: 20vh;
+    display: flex;
+    align-items: center;
+}
+
+#title {
+    font-size :80px;
+    font-weight: bold;
+    margin-left: 10%;
+    text-align: left;
+    flex-grow: 1;
+}
+
+#options {
+    margin-right: 10%;
+}
+
+.infobox {
+
+    display: inline-block;
+    background-color: $color-infobox;
+    color: white;
+    min-width: 75px;
+    border-radius: $border-radius-normal;
+
+    &.score {
+        margin-right: $layout-spacing;
+    }
+
+    .title {
+        padding: $layout-spacing $layout-spacing $layout-half-spacing;
+        text-transform: uppercase;
+        font-size: $font-size-small;
+        opacity: 0.75;
+    }
+
+    .content {
+        padding: $layout-half-spacing $layout-spacing $layout-spacing;
+        font-weight: bold;
+    }
+
+}
+
+#content {
+    height: 80vh;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -1,0 +1,32 @@
+// index.jade
+
+doctype html
+html(lang="en", xml:lang="en", dir="ltr")
+    head
+        title 2048
+
+        meta(charset="UTF-8")
+        meta(name="robots", content="NOYDIR")
+        meta(name="robots", content="NOODP")
+        meta#m_viewport(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0")
+
+        link(rel="shortcut icon", href="/src/images/favicon.ico")
+
+        link(rel="stylesheet", type="text/css", href="/src/css/all.css", media="all")
+
+        script(type="text/javascript", src="/src/js/min/all.js")
+
+    body
+        #wrapper
+            #header
+                #title 2048
+                #options
+                    .infobox.score
+                        .title Score
+                        .content 0
+                    .infobox.best
+                        .title Best
+                        .content 0
+            #content
+                #board
+                    .content
