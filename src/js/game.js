@@ -15,14 +15,13 @@ var game = function ( options ) {
 
         add_placeholders ();
 
-        for ( var n = 0; n < options.blocks.start_nr; n++ ) {
+        add_blocks ( options.blocks.how_many.at_start );
 
-            add_block ();
+        $score_nr.html ( score );
 
-        }
+        best_score = cookie.read ( options.score.best_cookie_name ) || 0;
 
-        $score.html ( options.score.start );
-        $best.html ( 0 ); //TODO: get it from the cookies
+        $best_nr.html ( best_score );
 
         status = 'playing';
 
@@ -82,7 +81,7 @@ var game = function ( options ) {
     var add_block = function () {
 
         var index = get_random_empty_index (),
-            value = check_double_probability () ? options.blocks.base * 2 : options.blocks.base;
+            value = get_new_block_value ();
 
         if ( index === false ) return false;
 
@@ -96,13 +95,43 @@ var game = function ( options ) {
 
         positionate_block ( $block, index );
 
+        $.defer ( function () {
+
+            $block.removeClass ( 'unpop' );
+
+        });
+
+        return true;
+
+    };
+
+    var add_blocks = function ( nr ) {
+
+        var added = [];
+
+        for ( var n = 0; n < nr; n++ ) {
+
+            added.push ( add_block () );
+
+        }
+
+        for ( var n = 0; n < added.length; n++ ) {
+
+            if ( added[n] === false ) {
+
+                return false;
+
+            }
+
+        }
+
         return true;
 
     };
 
     var get_block_html = function ( index, value ) {
 
-        return '<div class="block index-' + index + ' value-' + value + '" data-value="' + value + '"></div>';
+        return '<div class="block unpop index-' + index + ' value-' + value + '" data-value="' + value + '"></div>';
 
     };
 
@@ -133,9 +162,21 @@ var game = function ( options ) {
 
     };
 
-    var check_double_probability = function () {
+    var get_new_block_value = function () {
 
-        return ( Math.floor ( Math.random () * 100 ) + 1 ) <= options.blocks.double_probability;
+        var percentage = Math.random () * 100;
+
+        for ( var power in options.blocks.powers_probability ) {
+
+            if ( percentage !== 0 && percentage <= options.blocks.powers_probability[power] ) {
+
+                return Math.pow ( options.blocks.base, power );
+
+            }
+
+        }
+
+        return options.blocks.base;
 
     };
 
@@ -143,7 +184,8 @@ var game = function ( options ) {
 
         var reversed = false;
             merged = false,
-            moved = false;
+            moved = false,
+            new_score = 0;
 
         // REVERSE - Part 1
 
@@ -180,6 +222,8 @@ var game = function ( options ) {
                     board[new_offset].value *= 2;
                     board[new_offset].merged = true;
 
+                    new_score += board[new_offset].value;
+
                     board[n].value = false;
 
                     var $start_block = $board_content.find ( '.block.index-' + ( reversed ? options.size.x * options.size.y - 1 - n : n ) );
@@ -187,6 +231,14 @@ var game = function ( options ) {
 
                     $end_block.attr ( 'class', 'block index-' + ( reversed ? options.size.x * options.size.y - 1 - new_offset : new_offset ) + ' value-' + board[new_offset].value );
                     $end_block.data ( 'value', board[new_offset].value );
+
+                    $end_block.addClass ( 'pop' );
+
+                    setTimeout ( function ( $end_block ) {
+
+                        $end_block.removeClass ( 'pop' );
+
+                    }, options.animations.duration / 2, $end_block );
 
                     if ( options.debug ) {
 
@@ -199,9 +251,15 @@ var game = function ( options ) {
 
                     }
 
-                    $start_block.remove ();
+                    positionate_block ( $start_block, ( reversed ? options.size.x * options.size.y - 1 - new_offset : new_offset ) );
 
-                    //TODO: animations
+                    $start_block.addClass ( 'unpop' );
+
+                    setTimeout ( function ( $start_block ) {
+
+                        $start_block.remove ();
+
+                    }, options.animations.duration, $start_block );
 
                     merged = true;
 
@@ -261,7 +319,7 @@ var game = function ( options ) {
 
                 var $start_block = $board_content.find ( '.block.index-' + ( reversed ? options.size.x * options.size.y - 1 - n : n ) );
 
-                $start_block.attr ( 'class', 'block index-' + ( reversed ? options.size.x * options.size.y - 1 - last_empty_offset : last_empty_offset ) + ' value-' + board[last_empty_offset].value );
+                $start_block.attr ( 'class', 'block index-' + ( reversed ? options.size.x * options.size.y - 1 - last_empty_offset : last_empty_offset ) + ' value-' + board[last_empty_offset].value + ' ' + ( $start_block.hasClass ( 'pop' ) ? 'pop' : '' ) );
 
                 if ( options.debug ) {
 
@@ -274,8 +332,6 @@ var game = function ( options ) {
                 }
 
                 positionate_block ( $start_block, ( reversed ? options.size.x * options.size.y - 1 - last_empty_offset : last_empty_offset ) );
-
-                //TODO: animations
 
                 moved = true;
 
@@ -303,9 +359,59 @@ var game = function ( options ) {
 
         }
 
+        // SCORE
+
+        if ( new_score > 0 ) {
+
+            score += new_score;
+
+            $score_nr.html ( score );
+
+            $score.append ( get_score_notified_html ( new_score ) );
+
+            var $notified = $score.find ( '.notified' ).last ();
+
+            $.defer ( function () {
+
+                $notified.addClass ( 'show' );
+
+                $.defer ( function () {
+
+                    $notified.addClass ( 'hide' );
+
+                    setTimeout ( function () {
+
+                        $notified.remove ();
+
+                    }, options.animations.duration );
+
+                }, options.animations.duration / 3 );
+
+            });
+
+            if ( score > best_score ) {
+
+                best_score = score;
+
+                cookie.write ( options.score.best_cookie_name, best_score );
+
+                $best_nr.html ( score );
+
+                $best.addClass ( 'highlight' );
+
+            }
+
+        }
+
         // RETURNING
 
         return merged || moved;
+
+    };
+
+    var get_score_notified_html = function ( score ) {
+
+        return '<div class="notified">' + ( ( score >= 0 ) ? '+' : '-' ) + score + '</div>';
 
     };
 
@@ -394,10 +500,14 @@ var game = function ( options ) {
     var status = 'initing',
         listening = false,
         board = [],
+        score = options.score.start,
+        best_score = 0,
         $board = $('#board'),
         $board_content = $board.find ( '.content' ),
         $score = $('.infobox.score .content'),
-        $best = $('.infobox.best .content');
+        $score_nr = $score.find ( '.nr' ),
+        $best = $('.infobox.best .content'),
+        $best_nr = $best.find ( '.nr' );
 
     // INIT
 
@@ -415,7 +525,8 @@ var game = function ( options ) {
 
         listening = false;
 
-        var moved = false;
+        var added,
+            moved;
 
         switch ( event.keyCode ) {
 
@@ -445,7 +556,7 @@ var game = function ( options ) {
 
             }
 
-            add_block ();
+            added = add_blocks ( options.blocks.how_many.after_turn );
 
             if ( options.debug ) {
 
@@ -469,31 +580,49 @@ var game = function ( options ) {
 
     });
 
-    // Touch 
+    // Touch
 
-    //TODO
+    //TODO: Add touch support
 
 };
 
 /* OPTIONS */
 
 var options = {
-    debug: false,
-    size: { //FIXME: if the ratio isn't 1:1 the board still stends squared
-        x: 4, 
+    init: function () {
+        options.animations.duration = options.animations.enabled ? options.animations.duration : 0;
+        options.score.goal = Math.pow ( options.blocks.base, options.score.goal_power );
+    },
+    debug: true,
+    animations: {
+        enabled: true,
+        duration: 250 // linked to the respective CSS value
+    },
+    size: {
+        x: 4,
         y: 4
     },
     blocks: {
-        start_nr: 2,
+        how_many: {
+            at_start: 2,
+            after_turn: 1
+        },
         base: 2,
-        double_probability: 10 //%
+        powers_probability: { // It must be sorbed descending by probability - power: probability (percentage) //FIXME: this won't work
+            2: 10,
+            3: 1,
+            4: 0.1
+        }
     },
     score: {
         start: 0,
-        goal: 2048,
+        goal_power: 11,
+        goal: 0, // Generated by the init function
         best_cookie_name: 'best'
     }
 };
+
+options.init ();
 
 /* READY */
 

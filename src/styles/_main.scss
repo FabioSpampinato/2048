@@ -20,6 +20,7 @@ body {
     position: relative;
     height: 100%;
     text-align: center;
+    font-size: 1rem;
 }
 
 /* OTHER */
@@ -55,6 +56,10 @@ body {
     min-width: 75px;
     border-radius: $border-radius-normal;
 
+    &.highlight {
+
+    }
+
     &.score {
         margin-right: $layout-spacing;
     }
@@ -67,8 +72,36 @@ body {
     }
 
     .content {
+
         padding: $layout-half-spacing $layout-spacing $layout-spacing;
         font-weight: bold;
+        position: relative;
+
+        .notified {
+
+            color: #726E65;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            transform: scale(0);
+            opacity: 0.5;
+            transition: transform 0.25s ease 0s, top 0.25s ease 0s, opacity 0.25s ease 0s;
+
+            &.show {
+                top: -8px;
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            &.hide {
+                top: -50px;
+                opacity: 0.75;
+            }
+
+        }
+
     }
 
 }
