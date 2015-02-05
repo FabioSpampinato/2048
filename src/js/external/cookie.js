@@ -5,7 +5,7 @@ var cookie = {
 
     destroy: function ( name ) {
 
-        this.write ( name, '', - 86400 * 365, '/', 'localhost' );
+        this.write ( name, '', - 86400 * 365, '/' );
 
     },
 
